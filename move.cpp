@@ -1,14 +1,15 @@
 #include "move.h"
 
-Move::Move() {
-    x_ = 5;
-    y_ = 0;
+Move::Move(const Piece& piece, int row, int col) {
+    piece_ = piece;
+    row_ = row;
+    col_ = col;
 }
 
-int Move::getX() const {
-    return x_;
+int Move::getRow() const {
+    return row_;
 }
 
-int Move::getY() const {
-    return y_;
+int Move::getCol() const {
+    return col_;
 }

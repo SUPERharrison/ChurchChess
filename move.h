@@ -1,16 +1,18 @@
 #ifndef MOVE_H
 #define MOVE_H
+#include "piece.h"
 
 class Move {
 
   private:
-      int x_;
-      int y_;
+      Piece piece_;
+      int row_;
+      int col_;
 
   public:
-      explicit Move();
-      int getX() const;
-      int getY() const;
+      explicit Move(const Piece&, int, int);
+      int getRow() const;
+      int getCol() const;
 
 };
 
