@@ -1,15 +1,29 @@
 #include "move.h"
 
-Move::Move(const Piece& piece, int row, int col) {
-    piece_ = piece;
-    row_ = row;
-    col_ = col;
+Move::Move(char rowStart, char colStart, char rowEnd, char colEnd) {
+    rowStart_ = rowStart;
+    colStart_ = colStart;
+    rowEnd_ = rowEnd;
+    colEnd_ = colEnd;
+    enPassant_ = 0;
 }
 
-int Move::getRow() const {
-    return row_;
+char Move::getRowStart() const {
+    return rowStart_;
 }
 
-int Move::getCol() const {
-    return col_;
+char Move::getColStart() const {
+    return colStart_;
+}
+
+char Move::getRowEnd() const {
+    return rowEnd_;
+}
+
+char Move::getColEnd() const {
+    return colEnd_;
+}
+
+void Move::setEnPassant() {
+    enPassant_ = 1;
 }

@@ -1,10 +1,10 @@
 #include <iostream>
-#include "piece.h"
-#include "move.h"
 #include "chessboard.h"
+#include "queen.h"
 
 int main(int argc, char** argv) {
     std::cout << "Hello, world!" << std::endl;
+    Chessboard c;
     /*
     Piece a("name");
     Move b;
