@@ -1,8 +1,12 @@
 #include "chessboard.h"
 
-Chessboard::Chessboard() {
+Chessboard::Chessboard(char* inCheck) {
     for (char i = 0; i < SQUARE_ON_CHESSBOARD; i++) {
         frame_[i] = OPEN_SQUARE;
+    }
+
+    for (char i = 0; i < SQUARE_ON_CHESSBOARD; i++) {
+        inCheck_[i] = inCheck[i];
     }
 
     frame_[0] = WHITE_ROOK_QUEEN;
@@ -38,11 +42,28 @@ Chessboard::Chessboard() {
     frame_[61] = BLACK_BISHOP_KING;
     frame_[62] = BLACK_KNIGHT_KING;
     frame_[63] = BLACK_ROOK_KING;
+
+    enPassantCol_ = -1;
+    whiteKingCastle_ = 1;
+    whiteQueenCastle_ = 1;
+    blackKingCastle_ = 1;
+    blackQueenCastle_ = 1;
+}
+
+void Chessboard::clearNextCheck() {
+    for (char i = 0; i < SQUARE_ON_CHESSBOARD; i++) {
+        nextInCheck_[i] = 0;
+    }
 }
 
 std::vector<Move> Chessboard::getMoves() const {
     std::vector<Move> v;
     return v;
+}
+
+void Chessboard::buildNextCheckBoard() const {
+    clearNextCheck();
+    getMoves();
 }
 
 void Chessboard::checkForValidRow(char row) const {
@@ -127,6 +148,20 @@ char Chessboard::get(char row, char col) const {
     return frame_[row * 8 + col];
 }
 
+char Chessboard::setCheck(char row, char col) {
+    checkForValidRow(row);
+    checkForValidCol(col);
+
+    nextInCheck_[row * 8 + col] = 1;
+}
+
+char Chessboard::getCheck(char row, char col) const {
+    checkForValidRow(row);
+    checkForValidCol(col);
+
+    return inCheck_[row * 8 + col];
+}
+
 std::vector<Move> Chessboard::getMovesInDirection(char row, char col, char rowDirection, char colDirection) const {
     checkForValidRow(row);
     checkForValidCol(col);
@@ -139,6 +174,7 @@ std::vector<Move> Chessboard::getMovesInDirection(char row, char col, char rowDi
     char j = col + colDirection;
     for (; i >= 0 && i <= 7 && j >= 0 && j <= 7 && get(i, j) == OPEN_SQUARE; i += rowDirection, j += colDirection) {
         Move m(row, col, i, j);
+        setCheck(i, j);
         moves.push_back(m);
     }
 
@@ -150,3 +186,31 @@ std::vector<Move> Chessboard::getMovesInDirection(char row, char col, char rowDi
     return moves;
 }
 
+void Chessboard::resetEnPassantCol() {
+    enPassantCol_ = -1;
+}
+
+void Chessboard::setEnPassantCol(char col) {
+    checkForValidCol(col);
+    enPassantCol_ = col;
+}
+
+char Chessboard::getEnPassantCol() const {
+    return enPassantCol_;
+}
+
+char Chessboard::isWhiteKingCastlingAllowed() const {
+    return whiteKingCastle_;
+}
+
+char Chessboard::isWhiteQueenCastlingAllowed() const {
+    return whiteQueenCastle_;
+}
+
+char Chessboard::isBlackKingCastlingAllowed() const {
+    return blackKingCastle_;
+}
+
+char Chessboard::isBlackQueenCastlingAllowed() const {
+    return blackQueenCastle_;
+}

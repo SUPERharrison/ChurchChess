@@ -46,11 +46,13 @@ std::vector<Move> getPawnMoves(const Chessboard& chessboard,
 
         if (row < 7 && col > 0 && chessboard.getColor(row+1, col-1) == BLACK_PIECE) {
             Move m(row, col, row+1, col-1);
+            chessboard.setCheck(row+1, col-1);
             moves.push_back(m);
         }
 
         if (row < 7 && col < 7 && chessboard.getColor(row+1, col+1) == BLACK_PIECE) {
             Move m(row, col, row+1, col+1);
+            chessboard.setCheck(row+1, col+1);
             moves.push_back(m);
         }
 
@@ -81,11 +83,13 @@ std::vector<Move> getPawnMoves(const Chessboard& chessboard,
 
         if (row > 0 && col > 0 && chessboard.getColor(row-1, col-1) == WHITE_PIECE) {
             Move m(row, col, row-1, col-1);
+            chessboard.setCheck(row-1, col-1);
             moves.push_back(m);
         }
 
         if (row > 0 && col < 7 && chessboard.getColor(row-1, col+1) == WHITE_PIECE) {
             Move m(row, col, row-1, col+1);
+            chessboard.setCheck(row-1, col+1);
             moves.push_back(m);
         }
 

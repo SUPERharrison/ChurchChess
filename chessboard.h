@@ -50,17 +50,34 @@ class Chessboard {
 
     private:
         char frame_[SQUARE_ON_CHESSBOARD]; 
+        char inCheck_[SQUARE_ON_CHESSBOARD]; 
+        char nextInCheck_[SQUARE_ON_CHESSBOARD]; 
+        char enPassantCol_;
+        char whiteKingCastle_;
+        char whiteQueenCastle_;
+        char blackKingCastle_;
+        char blackQueenCastle_;
         void checkForValidRow(char row) const;
         void checkForValidCol(char col) const;
 
     public:
-        Chessboard();
+        Chessboard(char*);
         std::vector<Move> getMoves() const;
         char isBlack(char, char) const;
         char isWhite(char, char) const;
         char getColor(char, char) const;
         char get(char, char) const;
+        char getCheck(char, char) const;
+        char setCheck(char, char);
+        char getEnPassantCol() const;
+        void setEnPassantCol(char);
+        void resetEnPassantCol();
         std::vector<Move> getMovesInDirection(char, char, char, char) const;
+
+        char isWhiteKingCastlingAllowed() const;
+        char isWhiteQueenCastlingAllowed() const;
+        char isBlackKingCastlingAllowed() const;
+        char isBlackQueenCastlingAllowed() const;
 };
 
 #endif
