@@ -1,12 +1,12 @@
 #include "chessboard.h"
 
-Chessboard::Chessboard(char* inCheck) {
+Chessboard::Chessboard() {
     for (char i = 0; i < SQUARE_ON_CHESSBOARD; i++) {
         frame_[i] = OPEN_SQUARE;
     }
 
     for (char i = 0; i < SQUARE_ON_CHESSBOARD; i++) {
-        inCheck_[i] = inCheck[i];
+        inCheck_[i] = 0;
     }
 
     frame_[0] = WHITE_ROOK_QUEEN;
@@ -50,6 +50,23 @@ Chessboard::Chessboard(char* inCheck) {
     blackQueenCastle_ = 1;
 }
 
+
+Chessboard::Chessboard(const Chessboard& chessboard) {
+    for (char i = 0; i < SQUARE_ON_CHESSBOARD; i++) {
+        frame_[i] = chessboard.frame_[i];
+    }
+
+    for (char i = 0; i < SQUARE_ON_CHESSBOARD; i++) {
+        inCheck_[i] = chessboard.inCheck_[i];
+    }
+
+    enPassantCol_ = chessboard.enPassantCol_;
+    whiteKingCastle_ = chessboard.whiteKingCastle_;
+    whiteQueenCastle_ = chessboard.whiteQueenCastle_;
+    blackKingCastle_ = chessboard.blackKingCastle_;
+    blackQueenCastle_ = chessboard.blackQueenCastle_;
+}
+
 void Chessboard::clearNextCheck() {
     for (char i = 0; i < SQUARE_ON_CHESSBOARD; i++) {
         nextInCheck_[i] = 0;
@@ -61,7 +78,7 @@ std::vector<Move> Chessboard::getMoves() const {
     return v;
 }
 
-void Chessboard::buildNextCheckBoard() const {
+void Chessboard::buildNextCheckBoard() {
     clearNextCheck();
     getMoves();
 }
@@ -174,12 +191,13 @@ std::vector<Move> Chessboard::getMovesInDirection(char row, char col, char rowDi
     char j = col + colDirection;
     for (; i >= 0 && i <= 7 && j >= 0 && j <= 7 && get(i, j) == OPEN_SQUARE; i += rowDirection, j += colDirection) {
         Move m(row, col, i, j);
-        setCheck(i, j);
+        m.setCheck();
         moves.push_back(m);
     }
 
     if (i >= 0 && i <= 7 && j >= 0 && j <= 7 && getColor(i, j) != color) {
         Move m(row, col, i, j);
+        m.setCheck();
         moves.push_back(m);
     }
 

@@ -7,6 +7,6 @@
 #include "move.h"
 
 char isRook(char piece);
-vector<Move> getRookMoves(const Chessboard&, char, char);
+std::vector<Move> getRookMoves(const Chessboard&, char, char);
 
 #endif

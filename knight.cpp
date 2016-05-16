@@ -23,8 +23,8 @@ std::vector<Move> getKnightMoves(const Chessboard& chessboard,
     char directions[8][2] = {{2, 1}, {2, -1}, {1, 2}, {-1, 2}, {-2, 1}, {-2, -1}, {1, -2}, {-1, -2}};
 
     for (int i = 0; i < 8; i++) {
-        char rowPrime = row + directions[0];
-        char colPrime = col + directions[1];
+        char rowPrime = row + directions[i][0];
+        char colPrime = col + directions[i][1];
 
         if (rowPrime >= 0 && rowPrime <= 7 && colPrime >= 0 && colPrime <= 7 && chessboard.getColor(rowPrime, colPrime) != color) {
             Move m(row, col, rowPrime, colPrime);

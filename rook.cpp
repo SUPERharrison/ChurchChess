@@ -8,7 +8,7 @@ char isRook(char piece) {
            ;
 }
 
-vector<Move> getRookMoves(const Chessboard& chessboard,
+std::vector<Move> getRookMoves(const Chessboard& chessboard,
                            char row,
                            char col) {
 
@@ -16,13 +16,13 @@ vector<Move> getRookMoves(const Chessboard& chessboard,
         throw std::invalid_argument("This is not a rook.");
     }
 
-    vector<Move> moves;
+    std::vector<Move> moves;
 
     char directions[4][2] = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
     for (int i = 0; i < 4; i++) {
-        vector<Move> m = chessboard.getMovesInDirection(row, col, directions[i][0], directions[i][1]);
-        moves.insert(moves.end(), m.start(), m.end());
+        std::vector<Move> m = chessboard.getMovesInDirection(row, col, directions[i][0], directions[i][1]);
+        moves.insert(moves.end(), m.begin(), m.end());
     }
 
     return moves;

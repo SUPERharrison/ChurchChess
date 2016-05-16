@@ -7,6 +7,6 @@
 #include "move.h"
 
 char isKnight(char piece);
-vector<Move> getKnightMoves(const Chessboard&, char, char);
+std::vector<Move> getKnightMoves(const Chessboard&, char, char);
 
 #endif

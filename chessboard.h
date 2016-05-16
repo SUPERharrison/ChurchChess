@@ -57,11 +57,14 @@ class Chessboard {
         char whiteQueenCastle_;
         char blackKingCastle_;
         char blackQueenCastle_;
+        void clearNextCheck();
+        void buildNextCheckBoard();
         void checkForValidRow(char row) const;
         void checkForValidCol(char col) const;
 
     public:
-        Chessboard(char*);
+        Chessboard();
+        Chessboard(const Chessboard&);
         std::vector<Move> getMoves() const;
         char isBlack(char, char) const;
         char isWhite(char, char) const;

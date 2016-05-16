@@ -8,7 +8,10 @@ class Move {
       char colStart_;
       char rowEnd_;
       char colEnd_;
+      char check_;
+      char castling_;
       char enPassant_;
+      char enPassantTaken_;
 
   public:
       explicit Move(char, char, char, char);
@@ -16,7 +19,14 @@ class Move {
       char getColStart() const;
       char getRowEnd() const;
       char getColEnd() const;
+      void setCheck();
+      char getCheck() const;
       void setEnPassant();
+      char getEnPassant() const;
+      void setEnPassantTaken();
+      char getEnPassantTaken() const;
+      void setCastling();
+      char getCastling() const;
 
 };
 

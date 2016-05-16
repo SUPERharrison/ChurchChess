@@ -7,6 +7,6 @@
 #include "move.h"
 
 char isPawn(char piece);
-vector<Move> getPawnMoves(const Chessboard&, char, char);
+std::vector<Move> getPawnMoves(const Chessboard&, char, char);
 
 #endif

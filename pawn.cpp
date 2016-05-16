@@ -40,19 +40,19 @@ std::vector<Move> getPawnMoves(const Chessboard& chessboard,
 
         if (row == 1 && chessboard.get(2, col) == OPEN_SQUARE && chessboard.get(3, col) == OPEN_SQUARE) {
             Move m(row, col, 3, col);
-            m.setEnPassantOpen();
+            m.setEnPassant();
             moves.push_back(m);
         }
 
         if (row < 7 && col > 0 && chessboard.getColor(row+1, col-1) == BLACK_PIECE) {
             Move m(row, col, row+1, col-1);
-            chessboard.setCheck(row+1, col-1);
+            m.setCheck();
             moves.push_back(m);
         }
 
         if (row < 7 && col < 7 && chessboard.getColor(row+1, col+1) == BLACK_PIECE) {
             Move m(row, col, row+1, col+1);
-            chessboard.setCheck(row+1, col+1);
+            m.setCheck();
             moves.push_back(m);
         }
 
@@ -77,19 +77,19 @@ std::vector<Move> getPawnMoves(const Chessboard& chessboard,
 
         if (row == 6 && chessboard.get(5, col) == OPEN_SQUARE && chessboard.get(4, col) == OPEN_SQUARE) {
             Move m(row, col, 4, col);
-            m.setEnPassantOpen();
+            m.setEnPassant();
             moves.push_back(m);
         }
 
         if (row > 0 && col > 0 && chessboard.getColor(row-1, col-1) == WHITE_PIECE) {
             Move m(row, col, row-1, col-1);
-            chessboard.setCheck(row-1, col-1);
+            m.setCheck();
             moves.push_back(m);
         }
 
         if (row > 0 && col < 7 && chessboard.getColor(row-1, col+1) == WHITE_PIECE) {
             Move m(row, col, row-1, col+1);
-            chessboard.setCheck(row-1, col+1);
+            m.setCheck();
             moves.push_back(m);
         }
 
