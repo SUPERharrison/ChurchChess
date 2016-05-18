@@ -1,6 +1,8 @@
 #ifndef MOVE_H
 #define MOVE_H
 
+#include <iostream>
+
 class Move {
 
   private:
@@ -27,6 +29,7 @@ class Move {
       char getEnPassantTaken() const;
       void setCastling();
       char getCastling() const;
+      void print() const;
 
 };
 

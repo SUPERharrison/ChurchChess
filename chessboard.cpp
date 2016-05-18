@@ -43,13 +43,12 @@ Chessboard::Chessboard() {
     frame_[62] = BLACK_KNIGHT_KING;
     frame_[63] = BLACK_ROOK_KING;
 
-    enPassantCol_ = -1;
     whiteKingCastle_ = 1;
     whiteQueenCastle_ = 1;
     blackKingCastle_ = 1;
     blackQueenCastle_ = 1;
+    enPassantCol_ = -1;
 }
-
 
 Chessboard::Chessboard(const Chessboard& chessboard) {
     for (char i = 0; i < SQUARE_ON_CHESSBOARD; i++) {
@@ -57,7 +56,11 @@ Chessboard::Chessboard(const Chessboard& chessboard) {
     }
 
     for (char i = 0; i < SQUARE_ON_CHESSBOARD; i++) {
-        inCheck_[i] = chessboard.inCheck_[i];
+        inCheck_[i] = chessboard.nextInCheck_[i];
+    }
+
+    for (char i = 0; i < SQUARE_ON_CHESSBOARD; i++) {
+        nextInCheck_[i] = 0;
     }
 
     enPassantCol_ = chessboard.enPassantCol_;
@@ -67,24 +70,123 @@ Chessboard::Chessboard(const Chessboard& chessboard) {
     blackQueenCastle_ = chessboard.blackQueenCastle_;
 }
 
-void Chessboard::clearNextCheck() {
-    for (char i = 0; i < SQUARE_ON_CHESSBOARD; i++) {
-        nextInCheck_[i] = 0;
+std::vector<Move> Chessboard::getMoves(char color) {
+    std::vector<Move> moves;
+
+    for (int row = 0; row < 8; row++) {
+        for (int col = 0; col < 8; col++) {
+            char piece = get(row, col);
+            char pieceColor = getColor(row, col);
+            std::vector<Move> m;
+
+            if (pieceColor == color) {
+                if (isPawn(piece)) {
+                    m = getPawnMoves(*this, row, col);
+                }
+
+                if (isKnight(piece)) {
+                    m = getKnightMoves(*this, row, col);
+                }
+
+                if (isBishop(piece)) {
+                    m = getBishopMoves(*this, row, col);
+                }
+
+                if (isRook(piece)) {
+                    m = getRookMoves(*this, row, col);
+                }
+
+                if (isQueen(piece)) {
+                    m = getQueenMoves(*this, row, col);
+                }
+
+                if (isKing(piece)) {
+                    m = getKingMoves(*this, row, col);
+                }
+
+                moves.insert(moves.end(), m.begin(), m.end());
+            }
+        }
+    }
+
+    buildNextCheckBoard(moves);
+
+    return moves;
+}
+
+void Chessboard::buildNextCheckBoard(const std::vector<Move>& moves) {
+    for (int i = 0; i < moves.size(); i++) {
+        if (moves[i].getCheck()) {
+            char row = moves[i].getRowEnd();
+            char col = moves[i].getColEnd();
+            char square = row * 8 + col;
+            nextInCheck_[square] = 1;
+        }
     }
 }
 
-std::vector<Move> Chessboard::getMoves() const {
-    std::vector<Move> v;
-    return v;
-}
+Chessboard Chessboard::applyMove(const Move& move) const {
+    Chessboard next(*this);
+    
+    // In every circumstance, we move a piece from one location to another.
+    char rowStart = move.getRowStart();
+    char colStart = move.getColStart();
+    char rowEnd = move.getRowEnd();
+    char colEnd = move.getColEnd();
 
-void Chessboard::buildNextCheckBoard() {
-    clearNextCheck();
-    getMoves();
+    char pieceStart = next.get(rowStart, colStart);
+    char pieceColor = next.getColor(rowStart, colStart);
+
+    if (pieceStart == OPEN_SQUARE) {
+        throw std::invalid_argument("Can't move from open square.");
+    }
+
+    next.set(rowStart, colStart, OPEN_SQUARE); 
+    next.set(rowEnd, colEnd, pieceStart); 
+
+    // We handle the en passant.
+    if (move.getEnPassantTaken()) {
+        if (pieceColor == WHITE_PIECE) {
+            next.set(4, colEnd, OPEN_SQUARE);
+        }
+
+        if (pieceColor == BLACK_PIECE) {
+            next.set(3, colEnd, OPEN_SQUARE);
+        }
+    }
+
+    // We always update enPassantCol_ to move.getEnPassant()
+    next.enPassantCol_ = move.getEnPassant();
+
+    // We handle castling.
+    if (move.getCastling()) {
+        if (rowEnd == 0 && colEnd == 2) {
+            next.set(rowEnd, 0, OPEN_SQUARE); 
+            next.set(rowEnd, 3, WHITE_ROOK_QUEEN); 
+        }
+        else if (rowEnd == 0 && colEnd == 6) {
+            next.set(rowEnd, 0, OPEN_SQUARE); 
+            next.set(rowEnd, 5, WHITE_ROOK_KING); 
+        }
+        else if (rowEnd == 7 && colEnd == 2) {
+            next.set(rowEnd, 0, OPEN_SQUARE); 
+            next.set(rowEnd, 3, BLACK_ROOK_QUEEN); 
+        }
+        else if (rowEnd == 7 && colEnd == 6) {
+            next.set(rowEnd, 0, OPEN_SQUARE); 
+            next.set(rowEnd, 5, BLACK_ROOK_KING); 
+        }
+        else {
+            throw std::invalid_argument("Castling was not properly set.");
+        }
+    }
+
+    return next;
 }
 
 void Chessboard::checkForValidRow(char row) const {
     if (row < 0 || row >= 8) {
+        int rowInt = row;
         throw std::invalid_argument("Invalid row.");
     }
 }
@@ -158,6 +260,11 @@ char Chessboard::getColor(char row, char col) const {
     return OPEN_SQUARE;
 }
 
+void Chessboard::set(char row, char col, char piece) {
+    frame_[row * 8 + col] = piece;
+}
+
+
 char Chessboard::get(char row, char col) const {
     checkForValidRow(row);
     checkForValidCol(col);
@@ -202,15 +309,6 @@ std::vector<Move> Chessboard::getMovesInDirection(char row, char col, char rowDi
     }
 
     return moves;
-}
-
-void Chessboard::resetEnPassantCol() {
-    enPassantCol_ = -1;
-}
-
-void Chessboard::setEnPassantCol(char col) {
-    checkForValidCol(col);
-    enPassantCol_ = col;
 }
 
 char Chessboard::getEnPassantCol() const {

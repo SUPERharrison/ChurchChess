@@ -1,12 +1,13 @@
 #ifndef CHESSBOARD_H
 #define CHESSBOARD_H
 
+#include <iostream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 #include "move.h"
 
 #define SQUARE_ON_CHESSBOARD 64
-#define PIECES_ON_CHESSBOARD 32
 
 #define OPEN_SQUARE 0
 #define WHITE_PIECE 1
@@ -57,15 +58,17 @@ class Chessboard {
         char whiteQueenCastle_;
         char blackKingCastle_;
         char blackQueenCastle_;
-        void clearNextCheck();
-        void buildNextCheckBoard();
-        void checkForValidRow(char row) const;
-        void checkForValidCol(char col) const;
+
+        void set(char, char, char);
+        void buildNextCheckBoard(const std::vector<Move>&);
+        void checkForValidRow(char) const;
+        void checkForValidCol(char) const;
 
     public:
         Chessboard();
         Chessboard(const Chessboard&);
-        std::vector<Move> getMoves() const;
+        std::vector<Move> getMoves(char);
+        Chessboard applyMove(const Move&) const;
         char isBlack(char, char) const;
         char isWhite(char, char) const;
         char getColor(char, char) const;
@@ -73,8 +76,6 @@ class Chessboard {
         char getCheck(char, char) const;
         char setCheck(char, char);
         char getEnPassantCol() const;
-        void setEnPassantCol(char);
-        void resetEnPassantCol();
         std::vector<Move> getMovesInDirection(char, char, char, char) const;
 
         char isWhiteKingCastlingAllowed() const;
@@ -82,5 +83,12 @@ class Chessboard {
         char isBlackKingCastlingAllowed() const;
         char isBlackQueenCastlingAllowed() const;
 };
+
+#include "pawn.h"
+#include "knight.h"
+#include "bishop.h"
+#include "rook.h"
+#include "queen.h"
+#include "king.h"
 
 #endif

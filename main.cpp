@@ -1,14 +1,17 @@
 #include <iostream>
+#include <vector>
 #include "chessboard.h"
-#include "queen.h"
+
+using namespace std;
 
 int main(int argc, char** argv) {
-    std::cout << "Hello, world!" << std::endl;
+    cout << "Hello, world!" << std::endl;
     Chessboard c;
-    /*
-    Piece a("name");
-    Move b;
-    std::cout << b.getX() << std::endl;
-    */
+    vector<Move> moves = c.getMoves(BLACK_PIECE);
+
+    for (int i = 0; i < moves.size(); i++) {
+        moves[i].print();
+    }
+
     return 0;
 }

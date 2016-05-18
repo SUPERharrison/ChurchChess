@@ -22,10 +22,12 @@ std::vector<Move> getKingMoves(const Chessboard& chessboard,
     for (int i = 0; i < 8; i++) {
         char rowPrime = row + directions[i][0];
         char colPrime = col + directions[i][1];
-        if (chessboard.getColor(rowPrime, colPrime) != color && chessboard.getCheck(rowPrime, colPrime) == 0) {
-            Move m(row, col, rowPrime, colPrime);
-            m.setCheck();
-            moves.push_back(m);
+        if (rowPrime >= 0 && rowPrime <= 7 && colPrime >= 0 && colPrime <= 7) {
+            if (chessboard.getColor(rowPrime, colPrime) != color && chessboard.getCheck(rowPrime, colPrime) == 0) {
+                Move m(row, col, rowPrime, colPrime);
+                m.setCheck();
+                moves.push_back(m);
+            }
         }
     }
 

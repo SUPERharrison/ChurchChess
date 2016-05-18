@@ -58,3 +58,7 @@ void Move::setCastling() {
 char Move::getCastling() const {
     return castling_;
 }
+
+void Move::print() const {
+  std::cout << "(" << (int)getRowStart() << "," << (int)getColStart() << ") to (" << (int)getRowEnd() << "," << (int)getColEnd() << ")" << std::endl;
+}
