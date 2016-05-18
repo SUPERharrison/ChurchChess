@@ -1,9 +1,7 @@
 #ifndef CHESSBOARD_H
 #define CHESSBOARD_H
 
-#include <iostream>
 #include <stdexcept>
-#include <string>
 #include <vector>
 #include "move.h"
 
@@ -51,8 +49,7 @@ class Chessboard {
 
     private:
         char frame_[SQUARE_ON_CHESSBOARD]; 
-        char inCheck_[SQUARE_ON_CHESSBOARD]; 
-        char nextInCheck_[SQUARE_ON_CHESSBOARD]; 
+        unsigned long inCheck_; 
         char enPassantCol_;
         char whiteKingCastle_;
         char whiteQueenCastle_;
@@ -60,7 +57,8 @@ class Chessboard {
         char blackQueenCastle_;
 
         void set(char, char, char);
-        void buildNextCheckBoard(const std::vector<Move>&);
+        char isKingInCheck(char);
+        void buildCheckBoard(const std::vector<Move>&);
         void checkForValidRow(char) const;
         void checkForValidCol(char) const;
 
@@ -74,7 +72,6 @@ class Chessboard {
         char getColor(char, char) const;
         char get(char, char) const;
         char getCheck(char, char) const;
-        char setCheck(char, char);
         char getEnPassantCol() const;
         std::vector<Move> getMovesInDirection(char, char, char, char) const;
 

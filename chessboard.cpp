@@ -5,10 +5,6 @@ Chessboard::Chessboard() {
         frame_[i] = OPEN_SQUARE;
     }
 
-    for (char i = 0; i < SQUARE_ON_CHESSBOARD; i++) {
-        inCheck_[i] = 0;
-    }
-
     frame_[0] = WHITE_ROOK_QUEEN;
     frame_[1] = WHITE_KNIGHT_QUEEN;
     frame_[2] = WHITE_BISHOP_QUEEN;
@@ -43,6 +39,7 @@ Chessboard::Chessboard() {
     frame_[62] = BLACK_KNIGHT_KING;
     frame_[63] = BLACK_ROOK_KING;
 
+    inCheck_ = 0;
     whiteKingCastle_ = 1;
     whiteQueenCastle_ = 1;
     blackKingCastle_ = 1;
@@ -55,13 +52,7 @@ Chessboard::Chessboard(const Chessboard& chessboard) {
         frame_[i] = chessboard.frame_[i];
     }
 
-    for (char i = 0; i < SQUARE_ON_CHESSBOARD; i++) {
-        inCheck_[i] = chessboard.nextInCheck_[i];
-    }
-
-    for (char i = 0; i < SQUARE_ON_CHESSBOARD; i++) {
-        nextInCheck_[i] = 0;
-    }
+    inCheck_ = chessboard.inCheck_;
 
     enPassantCol_ = chessboard.enPassantCol_;
     whiteKingCastle_ = chessboard.whiteKingCastle_;
@@ -70,37 +61,40 @@ Chessboard::Chessboard(const Chessboard& chessboard) {
     blackQueenCastle_ = chessboard.blackQueenCastle_;
 }
 
-std::vector<Move> Chessboard::getMoves(char color) {
-    std::vector<Move> moves;
+char Chessboard::isKingInCheck(char king) {
+    char kingInCheck = 0;
 
     for (int row = 0; row < 8; row++) {
         for (int col = 0; col < 8; col++) {
-            char piece = get(row, col);
-            char pieceColor = getColor(row, col);
-            std::vector<Move> m;
+            if (get(row, col) == king) {
+                kingInCheck = getCheck(row, col); 
+            }
+        }
+    }
+    return kingInCheck;
+}
 
-            if (pieceColor == color) {
+std::vector<Move> Chessboard::getMoves(char color) {
+    std::vector<Move> moves;
+    char kingInCheck = 0;
+
+    for (int row = 0; row < 8; row++) {
+        for (int col = 0; col < 8; col++) {
+            if (getColor(row, col) == color) {
+                std::vector<Move> m;
+                char piece = get(row, col);
+
                 if (isPawn(piece)) {
                     m = getPawnMoves(*this, row, col);
-                }
-
-                if (isKnight(piece)) {
+                } else if (isKnight(piece)) {
                     m = getKnightMoves(*this, row, col);
-                }
-
-                if (isBishop(piece)) {
+                } else if (isBishop(piece)) {
                     m = getBishopMoves(*this, row, col);
-                }
-
-                if (isRook(piece)) {
+                } else if (isRook(piece)) {
                     m = getRookMoves(*this, row, col);
-                }
-
-                if (isQueen(piece)) {
+                } else if (isQueen(piece)) {
                     m = getQueenMoves(*this, row, col);
-                }
-
-                if (isKing(piece)) {
+                } else if (isKing(piece)) {
                     m = getKingMoves(*this, row, col);
                 }
 
@@ -109,18 +103,19 @@ std::vector<Move> Chessboard::getMoves(char color) {
         }
     }
 
-    buildNextCheckBoard(moves);
+    buildCheckBoard(moves);
 
     return moves;
 }
 
-void Chessboard::buildNextCheckBoard(const std::vector<Move>& moves) {
+void Chessboard::buildCheckBoard(const std::vector<Move>& moves) {
+    inCheck_ = 0;
+
     for (int i = 0; i < moves.size(); i++) {
         if (moves[i].getCheck()) {
             char row = moves[i].getRowEnd();
             char col = moves[i].getColEnd();
-            char square = row * 8 + col;
-            nextInCheck_[square] = 1;
+            inCheck_ |= 1 << (row * 8 + col);
         }
     }
 }
@@ -180,6 +175,8 @@ Chessboard Chessboard::applyMove(const Move& move) const {
             throw std::invalid_argument("Castling was not properly set.");
         }
     }
+
+    next.getMoves(pieceColor);
 
     return next;
 }
@@ -272,18 +269,11 @@ char Chessboard::get(char row, char col) const {
     return frame_[row * 8 + col];
 }
 
-char Chessboard::setCheck(char row, char col) {
-    checkForValidRow(row);
-    checkForValidCol(col);
-
-    nextInCheck_[row * 8 + col] = 1;
-}
-
 char Chessboard::getCheck(char row, char col) const {
     checkForValidRow(row);
     checkForValidCol(col);
 
-    return inCheck_[row * 8 + col];
+    return inCheck_ & (1 << (row * 8 + col));
 }
 
 std::vector<Move> Chessboard::getMovesInDirection(char row, char col, char rowDirection, char colDirection) const {
